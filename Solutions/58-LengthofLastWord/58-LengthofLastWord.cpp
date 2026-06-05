@@ -1,31 +1,31 @@
-// Last updated: 6/5/2026, 6:12:06 PM
+// Last updated: 6/5/2026, 6:12:52 PM
 1class Solution {
 2public:
-3    /**
-4     * @param n an integer
-5     * @return a square matrix
-6     */
-7    vector<vector<int>> generateMatrix(int n) {
-8       vector<vector<int>> matrix(n, vector<int>(n));
-9
-10       for (int num = 0, left = 0, right = n - 1, top = 0, bottom = n - 1;
-11            left <= right && top <= bottom;
-12            ++left, --right, ++top, --bottom) {
-13
-14            for (int j = left; j <= right; ++j) {
-15                matrix[top][j] = ++num;
-16            }
-17            for (int i = top + 1; i < bottom; ++i) {
-18                matrix[i][right] = ++num;
-19            }
-20            for (int j = right; top < bottom && j >= left; --j) {
-21                matrix[bottom][j] = ++num;
-22            }
-23            for (int i = bottom - 1; left < right && i >= top + 1; --i) {
-24                matrix[i][left] = ++num;
-25            }
+3    string getPermutation(int n, int k) {
+4        vector<int> nums;
+5        int total = 1;
+6        for (int i = 1; i <= n; ++i) {
+7            nums.emplace_back(i);
+8            total *= i;
+9        }
+10
+11        // Cantor Ordering:
+12        // Construct the k-th permutation with a list of n numbers
+13        // Idea: group all permutations according to their first number (so n groups, each of
+14        // (n - 1)! numbers), find the group where the k-th permutation belongs, remove the common
+15        // first number from the list and append it to the resulting string, and iteratively
+16        // construct the (((k - 1) % (n - 1)!) + 1)-th permutation with the remaining n-1 numbers
+17        int group = total;
+18        stringstream permutation;
+19        while (n > 0) {
+20            group /= n;
+21            int idx = (k - 1) / group;
+22            permutation << nums[idx];
+23            nums.erase(nums.begin() + idx);
+24            k = (k - 1) % group + 1;
+25            --n;
 26        }
 27
-28        return matrix;
+28        return permutation.str();
 29    }
 30};
