@@ -1,40 +1,48 @@
-// Last updated: 6/5/2026, 8:42:05 PM
+// Last updated: 6/5/2026, 8:43:55 PM
 1class Solution {
 2public:
-3    string simplifyPath(string path) {
-4        vector<string> names;
-5        vector<string> tokens(move(split(path, '/')));
-6        for (const auto& token : tokens) {
-7            if (token == ".." && !names.empty()) {
-8                names.pop_back();
-9            } else if (token != ".." && token != "." && !token.empty()) {
-10                names.emplace_back(token);
-11            }
-12        }
-13        return string("/").append(join(names, '/'));
-14    }
-15
-16private:
-17    // Split string by delimitor.
-18    vector<string> split(const string& s, const char delim) {
-19        vector<string> tokens;
-20        stringstream ss(s);
-21        string token;
-22        while (getline(ss, token, delim)) {
-23            tokens.emplace_back(token);
-24        }
-25        return tokens;
-26    }
-27
-28    // Join strings with delimitor.
-29    string join(const vector<string>& names, const char delim) {
-30        ostringstream ss;
-31        if (!names.empty()) {
-32            const string delim_str(1, delim);
-33            copy(names.cbegin(), prev(names.cend()),
-34                 ostream_iterator<string>(ss, delim_str.c_str()));
-35            ss << names.back();
-36        }
-37        return ss.str();
-38    }
-39};
+3    void setZeroes(vector<vector<int>>& matrix) {
+4        if (matrix.empty()) {
+5            return;
+6        }
+7
+8        bool has_zero = false;
+9        int zero_i = -1, zero_j = -1;
+10
+11        for (int i = 0; i < matrix.size(); ++i) {
+12            for (int j = 0; j < matrix[0].size(); ++j) {
+13                if (matrix[i][j] == 0) {
+14                    if (!has_zero) {
+15                        zero_i = i;
+16                        zero_j = j;
+17                        has_zero = true;
+18                    }
+19                    matrix[zero_i][j] = 0;
+20                    matrix[i][zero_j] = 0;
+21                }
+22            }
+23        }
+24
+25        if (has_zero) {
+26            for (int i = 0; i < matrix.size(); ++i) {
+27                if (i == zero_i) {
+28                    continue;
+29                }
+30                for (int j = 0; j < matrix[0].size(); ++j) {
+31                    if (j == zero_j) {
+32                        continue;
+33                    }
+34                    if (matrix[zero_i][j] == 0 || matrix[i][zero_j] == 0) {
+35                        matrix[i][j] = 0;
+36                    }
+37                }
+38            }
+39            for (int i = 0; i < matrix.size(); ++i) {
+40                matrix[i][zero_j] = 0;
+41            }
+42            for (int j = 0; j < matrix[0].size(); ++j) {
+43                matrix[zero_i][j] = 0;
+44            }
+45        }
+46    }
+47};
