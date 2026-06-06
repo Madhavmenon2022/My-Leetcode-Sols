@@ -1,26 +1,16 @@
-// Last updated: 6/6/2026, 9:34:08 AM
-1/**
-2 * Definition for singly-linked list.
-3 * struct ListNode {
-4 *     int val;
-5 *     ListNode *next;
-6 *     ListNode() : val(0), next(nullptr) {}
-7 *     ListNode(int x) : val(x), next(nullptr) {}
-8 *     ListNode(int x, ListNode *next) : val(x), next(next) {}
-9 * };
-10 */
-11class Solution {
-12public:
-13    ListNode* deleteDuplicates(ListNode* head) {
-14        auto iter = head;
-15        while (iter) {
-16            auto runner = iter->next;
-17            while (runner && runner->val == iter->val) {
-18                runner = runner->next;
-19            }
-20            iter->next = runner;
-21            iter = runner;
-22        }
-23        return head; 
-24    }
-25};
+// Last updated: 6/6/2026, 9:34:44 AM
+1class Solution {
+2public:
+3    int largestRectangleArea(vector<int>& heights) {
+4        vector<int> stk = {-1};
+5        int result = 0;
+6        for (int i = 0; i <= size(heights); ++i) {
+7            while (stk.back() != -1 && (i == size(heights) || heights[stk.back()] >= heights[i])) {
+8                int last = stk.back(); stk.pop_back();
+9                result = max(result, heights[last] * ((i - 1) - stk.back()));
+10            }
+11            stk.emplace_back(i);
+12        }
+13        return result;
+14    }
+15};
