@@ -1,21 +1,28 @@
-// Last updated: 6/6/2026, 9:40:16 AM
+// Last updated: 6/8/2026, 2:43:52 PM
 1class Solution {
 2public:
-3    vector<vector<int>> subsetsWithDup(vector<int> &nums) {
-4        vector<vector<int>> result(1);
-5        sort(nums.begin(), nums.end());
-6        size_t previous_size = 0;
-7        for (size_t i = 0; i < nums.size(); ++i) {
-8            const size_t size = result.size();
-9            for (size_t j = 0; j < size; ++j) {
-10                // Only union non-duplicate element or new union set.
-11                if (i == 0 || nums[i] != nums[i - 1] || j >= previous_size) {
-12                    result.emplace_back(result[j]);
-13                    result.back().emplace_back(nums[i]);
-14                }
-15            }
-16            previous_size = size;
-17        }
-18        return result;
-19    }
-20};
+3    int numDecodings(string s) {
+4        if (s.empty()) {
+5            return 0;
+6        }
+7
+8        int prev = 0; // f[n - 2]
+9        int cur = 1;  // f[n - 1]
+10
+11        for (int i = 0; i < s.length(); ++i) {
+12            if (s[i] == '0') {
+13                cur = 0; // f[n - 1] = 0
+14            }
+15            if (i == 0 ||
+16                !(s[i - 1] == '1' || (s[i - 1] == '2' && s[i] <= '6'))) {
+17                prev = 0; // f[n - 2] = 0
+18            }
+19
+20            int tmp = cur;
+21            cur += prev; // f[n] = f[n - 1] + f[n - 2]
+22            prev = tmp;
+23        }
+24
+25        return cur;
+26    }
+27};
