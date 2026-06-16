@@ -1,4 +1,4 @@
-// Last updated: 6/16/2026, 6:17:12 PM
+// Last updated: 6/16/2026, 6:17:46 PM
 1/**
 2 * Definition for a binary tree node.
 3 * struct TreeNode {
@@ -12,12 +12,35 @@
 11 */
 12class Solution {
 13public:
-14    bool isSameTree(TreeNode* p, TreeNode* q) {
-15        if (!p && !q) {
+14    bool isSymmetric(TreeNode* root) {
+15        if (!root) {
 16            return true;
 17        }
-18        return p && q && p->val == q->val &&
-19               isSameTree(p->left, q->left) &&
-20               isSameTree(p->right, q->right);
-21    }
-22};
+18        // isSymmetricHelper(root->left, root->right)
+19        stack<TreeNode *> nodes;
+20        nodes.emplace(root->left);
+21        nodes.emplace(root->right);
+22
+23        while (!nodes.empty())  {
+24            auto right = nodes.top();
+25            nodes.pop();
+26            auto left = nodes.top();
+27            nodes.pop();
+28            if (!left && !right) {
+29                continue;
+30            }
+31            if (!left || !right || left->val != right->val) {
+32                return false;
+33            }
+34            // isSymmetricHelper(left->right, right->left)
+35            nodes.emplace(left->right);
+36            nodes.emplace(right->left);
+37
+38            // isSymmetricHelper(left->left, right->right)
+39            nodes.emplace(left->left);
+40            nodes.emplace(right->right);
+41        }
+42        return true;
+43    }
+44};
+45
