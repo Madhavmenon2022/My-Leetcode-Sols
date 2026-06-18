@@ -1,4 +1,4 @@
-// Last updated: 6/18/2026, 9:01:21 AM
+// Last updated: 6/18/2026, 9:05:20 AM
 1/**
 2 * Definition for a binary tree node.
 3 * struct TreeNode {
@@ -12,37 +12,32 @@
 11 */
 12class Solution {
 13public:
-14    int diameterOfBinaryTree(TreeNode* root) {
-15        return iter_dfs(root);
-16    }
-17
-18private:
-19    int iter_dfs(TreeNode *node) {
-20        int result = 0;
-21 
-22        vector<function<void()>> stk;
-23        function<void(TreeNode*, int*)> divide;
-24        function<void(TreeNode*, shared_ptr<int>&, shared_ptr<int>&, int *)> conquer;
-25        divide = [&](TreeNode *node, int *ret) {
-26            if (!node) {
-27                return;
-28            }
-29            auto ret1 = make_shared<int>(), ret2 = make_shared<int>();
-30            stk.emplace_back(bind(conquer, node, ret1, ret2, ret));
-31            stk.emplace_back(bind(divide, node->right, ret2.get()));
-32            stk.emplace_back(bind(divide, node->left, ret1.get()));
-33        };
-34        conquer = [&](TreeNode *node, shared_ptr<int> ret1, shared_ptr<int> ret2, int *ret) {
-35            result = max(result, *ret1 + *ret2);
-36            *ret = 1 + max(*ret1, *ret2);
-37        };
-38
-39        int max_h = 0;
-40        stk.emplace_back(bind(divide, node, &max_h));
-41        while (!stk.empty()) {
-42            auto cb = move(stk.back()); stk.pop_back();
-43            cb();
-44        }
-45        return result;
-46    }
-47};
+14    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+15        unordered_map<int, size_t> in_entry_idx_map;
+16        for (size_t i = 0; i < inorder.size(); ++i) {
+17            in_entry_idx_map.emplace(inorder[i], i);
+18        }
+19        return ReconstructPreInOrdersHelper(preorder, 0, preorder.size(), inorder, 0, inorder.size(),
+20                                            in_entry_idx_map);
+21    }
+22
+23    // Reconstructs the binary tree from pre[pre_s : pre_e - 1] and
+24    // in[in_s : in_e - 1].
+25    TreeNode *ReconstructPreInOrdersHelper(const vector<int>& preorder, size_t pre_s, size_t pre_e,
+26                                           const vector<int>& inorder, size_t in_s, size_t in_e,
+27                                           const unordered_map<int, size_t>& in_entry_idx_map) {
+28        if (pre_s == pre_e || in_s == in_e) {
+29            return nullptr;
+30        }
+31
+32        auto idx = in_entry_idx_map.at(preorder[pre_s]);
+33        auto left_tree_size = idx - in_s;
+34
+35        auto node = new TreeNode(preorder[pre_s]);
+36        node->left = ReconstructPreInOrdersHelper(preorder, pre_s + 1, pre_s + 1 + left_tree_size,
+37                                                  inorder, in_s, idx, in_entry_idx_map);
+38        node->right = ReconstructPreInOrdersHelper(preorder, pre_s + 1 + left_tree_size, pre_e,
+39                                                   inorder, idx + 1, in_e, in_entry_idx_map);
+40        return node;
+41    }
+42};
